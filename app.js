@@ -12,6 +12,9 @@ app.use(express.json())
 // routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/posts', require('./routes/postRoutes'));
+app.use('/api/v1/auth')
+
+
 
 app.get('/', (req, res) => {
     res.send('Blog Api is running ....')
