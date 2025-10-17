@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const { title } = require('process')
 const { Schema } = mongoose
 
 const PostSchmea = new Schema({
@@ -13,9 +12,10 @@ const PostSchmea = new Schema({
         required: true,
     },
     author: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
+        index: true,
     },
 },{
     timestamps: true

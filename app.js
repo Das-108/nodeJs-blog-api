@@ -2,6 +2,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 
+
+const connectDB = require('./db/connectDb')
 dotenv.config()
 
 const app = express()
@@ -9,17 +11,15 @@ const app = express()
 //middleware
 app.use(express.json())
 
+
 // routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/posts', require('./routes/postRoutes'));
-app.use('/api/v1/auth')
+app.use('/api/v1/auth', require('./routes/authRoutes'));
+app.use('/api/v1/posts', require('./routes/postRoutes'));
 
 
 
-app.get('/', (req, res) => {
-    res.send('Blog Api is running ....')
-})
+const PORT = 8000
 
-const PORT = process.env.port || 5000
-
-app.listen(PORT,() => console.log(`Sever is runngin on port ${PORT}`))
+connectDB().then(() => {
+  app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+});

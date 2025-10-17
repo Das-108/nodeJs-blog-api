@@ -1,11 +1,11 @@
-const post = require('../models/Post')
+const Post = require('../models/Post')
 
 const getAllPost = async (req, res) => {
     try {
         const posts = await Post.find().populate('author', ['username']).sort({ createdAt: -1});
         res.json(posts)
-    } catch (err) {
-        console.error(err.message);
+    } catch (error) {
+        console.error(error.message);
         res.status(500).send('server Error')
     }
 };
@@ -14,8 +14,9 @@ const getPost = async (req, res) => {
     try {
         const post = await Post.findById(req.params.id).populate('author', ['username']);
         if(!post) return res.status(404).json({ msg: 'Post is not found'})
-    }catch (err) {
-        console.error(err.message);
+        res.json(post)
+    }catch (error) {
+        console.error(error.message);
         res.status(500).send('Server Error');
     }
 };
@@ -54,8 +55,8 @@ const editPost = async (req, res) => {
 
         await post.save();
         res.json(post)
-    }catch(err) {
-        console.error(err.message)
+    }catch(error) {
+        console.error(error.message)
         res.status(500).send('Server Error')
     }
 };
@@ -71,8 +72,8 @@ const deletePost = async (req, res) => {
 
         await Post.findByIdAndDelete(req.params.id);
         res.json({ msg: 'Post removed successfully'})
-    }catch (err) {
-        console.error(err.message);
+    }catch (error) {
+        console.error(error.message);
         res.status(500).send('Server Error')
     }
 };
