@@ -1,6 +1,19 @@
 import React from 'react'
+import { use } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const LoginPage = () => {
+    const navigate = useNavigate()
+
+    const sendToSignUp = () => {
+        navigate('/signup')
+    }
+
+    const sendAdminPage = () => {
+        navigate('/adminhome')
+    }
+
+
   return (
     <div className='min-h-screen bg-amber-100 flex justify-center items-center'>
         <div className='w-[450px] border p-4 bg-white rounded-2xl'>
@@ -32,14 +45,15 @@ const LoginPage = () => {
 
                 <p className='mb-3'><span className='text-blue-600'>Forgot password?</span></p>
 
-                <button 
+                <button
+                    onClick={ sendAdminPage } 
                     className='bg-amber-400 text-white rounded p-2'
                     type='submit'             
                 >
                     Login
                 </button>
             </form>
-            <p>Don't have account? <span className='text-blue-600'>Sign Up</span></p>
+            <p>Don't have account? <span className='text-blue-600' onClick={ sendToSignUp } >Sign Up</span></p>
         </div>
     </div>
   )
