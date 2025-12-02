@@ -1,9 +1,49 @@
-import React from 'react'
-import { use } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import api from '../utils/axios-config'
+
+
 
 const LoginPage = () => {
     const navigate = useNavigate()
+
+    const [formData, setFormData] = useState({ 
+        email: '',
+        password: '',
+    })
+    const [error, setError] = useState(null)
+
+    const { email, password } = formData
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setError(null)
+
+        try {
+            const res = await api.post('/auth/login', formData)
+
+            const receviedToken = res.data && res.data.token;
+
+            if (receviedToken) {
+
+                localStorage.setItem('token', receviedToken)
+                console.log('Token saved login successful!')
+
+                navigate('/adminhome')
+            }else {
+                setError('Login Succeeded, but security token was not recived')
+            }
+
+        } catch (error) {
+            const errMsg = error.response?.data?.msg || 'Login failed due to server error.'
+            setError(errMsg)
+            console.error('Login Error: ', errMsg)
+        }
+    }
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value })
+    }
 
     const sendToSignUp = () => {
         navigate('/signup')
@@ -22,15 +62,21 @@ const LoginPage = () => {
                 <p className='text-lg text-gray-300'>Login to continue</p>
             </div>
 
+                {/* Error Message */}
+            { error && <p className='text-red-500 mb-3 text-center'>{error}</p>}
+
             <form
+                onSubmit={handleSubmit}
                 className='flex flex-col mb-3'
             >
                 <label htmlFor="Email">Email</label>
                 <input
                     className='border-gray-200 border p-2 rounded-xl mb-3'
                     type="email"
-                    name=""
-                    id="" 
+                    name="email"
+                    value={email}
+                    onChange={handleChange}
+                    required 
                     placeholder='Enter your email' 
                 />
 
@@ -38,15 +84,16 @@ const LoginPage = () => {
                 <input 
                     className='border-gray-200 border p-2 rounded-xl mb-3'
                     type="password"
-                    name=""
-                    id="" 
+                    name="password"
+                    value={password}
+                    onChange={handleChange} 
+                    required
                     placeholder='Enter your Password'
                 />
 
                 <p className='mb-3'><span className='text-blue-600'>Forgot password?</span></p>
 
                 <button
-                    onClick={ sendAdminPage } 
                     className='bg-amber-400 text-white rounded p-2'
                     type='submit'             
                 >

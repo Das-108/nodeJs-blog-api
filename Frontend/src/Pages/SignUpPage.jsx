@@ -1,8 +1,7 @@
-// frontend/src/Pages/SignUpPage.jsx
-
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../utils/axios-config' // Assuming this path is correct
+import api from '../utils/axios-config'
+import UserHome from './UserHome'
 
 const SignUpPage = () => {
     const navigate = useNavigate()
