@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../utils/axios-config'
-
+import DeleteConfirmationModal from '../Componets/DeleteConfirmationModal'
 
 
 const AdminHome = () => {
 
     const navigate = useNavigate()
 
-    const [posts, setPosts] = useState('')
+    const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
-    
+    const [showModal, setShowModal] = useState(false)
+    const [postToDelete, setPostToDelete] = useState(null)
+
     const fetchPosts = async () => {
         try {
             const res = await api.get('/posts')
@@ -21,7 +23,7 @@ const AdminHome = () => {
         } catch (error) {
             setError(error.response?.data?.msg || "Failed to fetch posts.")
             setLoading(false)
-            console.error("fetch Posts Error: " , err)
+            console.error("fetch Posts Error: " , error)
         }
     }
 
@@ -35,6 +37,47 @@ const AdminHome = () => {
 
     if(error) {
         return <div className="p-10 text-center text-red-500 font-bold">Error: {error} </div>
+    }
+
+
+    const openDeleteModal = (post) => {
+        setPostToDelete({ id: post._id, title: post.title})
+        setShowModal(true)
+    }
+
+    const deletePost = async () => {
+
+        const postId = postToDelete?.id
+        const postTitle = postToDelete?.title
+
+        if(!postToDelete) {
+            console.error('Deletion failed: Post ID was undefined or null')
+            setError("Error: cannot delete post. Missing ID.")
+            setShowModal(false)
+            setLoading(false)
+            setPostToDelete(null)
+        }
+
+        setShowModal(false)
+        setLoading(true)
+        
+        try {
+            await api.delete(`/posts/${postId}`)
+
+            setPosts(posts.filter(post => post._id !== postId))
+            alert(`Post "${postTitle}" deleted successfully!`)
+        } catch (error) {
+            setError(error.response?.data?.msg || "failed to delete post.")
+        }finally {
+            setPostToDelete(null)
+            setLoading(false)
+        }
+    }
+
+
+
+    const handleEdit = (postId) => {
+        navigate(`/edit-page/${postId}`)
     }
 
     const sendToCreatePost = () => {
@@ -57,8 +100,8 @@ const AdminHome = () => {
             </div>
 
             <div className='flex items-center gap-2 ml-2'>
-                <i className="ri-file-edit-line text-blue-600 text-2xl"></i>
-                <i className="ri-delete-bin-6-line text-2xl text-red-500"></i>
+                <i onClick={() => handleEdit (post._id)} className="ri-file-edit-line text-blue-600 text-2xl"></i>
+                <i onClick={() => openDeleteModal(post)} className="ri-delete-bin-6-line text-2xl text-red-500"></i>
             </div>
         </div>
     ))
@@ -67,7 +110,7 @@ const AdminHome = () => {
     <div>
         <nav className='bg-red-800 flex justify-between px-3 py-4'>
             <h3 className='font-bold text-white'>Simple Blog Website</h3>
-            <h6 className='font-medium text-white text-sm'>Welcome Back,Username</h6>
+            <h6 className='font-medium text-white text-sm'>Welcome Back,</h6>
         </nav>
 
         <div className='mt-8 p-2'>
@@ -80,9 +123,15 @@ const AdminHome = () => {
                 ) : (
                     <p className='mt-4 text-gray-600'> You haven't created any posts yet</p>
                 )
-            }
-            
+            }            
         </div>
+
+        <DeleteConfirmationModal
+            show={showModal}
+            post={postToDelete}
+            onDelete={deletePost}
+            onClose={() => setShowModal(false)}
+        />
     </div>
   )
 }

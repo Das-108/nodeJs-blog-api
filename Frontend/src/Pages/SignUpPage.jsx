@@ -24,39 +24,41 @@ const SignUpPage = () => {
     }
 
     const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError(null)
+        e.preventDefault();
+        setError(null);
 
-    try {
+        try {
         const res = await api.post('/auth/register', formData);
         
-        // --- STEP 1: DEFENSIVE TOKEN CHECK ---
-        const receivedToken = res.data && res.data.token;
+        const receivedToken = res.data?.token; // Use optional chaining for safety
         
         if (receivedToken) { 
             
             localStorage.setItem('token', receivedToken);
-            console.log('Registration successful! Token saved.');
-
-            // --- STEP 2: REDIRECT ---
-            // The console log confirms success, so we navigate immediately.
-            alert('Success! Redirecting to home page.'); 
-            navigate('/');
+            
+            // 🛑 FIX 1: Removed synchronous alert()
+            console.log('Registration successful! Redirecting to /adminhome.'); 
+            
+            // 🛑 FIX 2: Use setTimeout to ensure the navigation executes cleanly
+            setTimeout(() => {
+                // Use the correct destination path
+                navigate('/adminhome'); 
+            }, 50); // A minimal delay to decouple the execution
             
         } else {
-            // This handles a case where the API returns 200/201 but the token field is missing.
-            console.error('Registration successful, but the token field was missing from the response.', res.data);
-            setError('Registration completed, but automatic login failed. Please try logging in.');
-            // We still navigate to the login page to let the user proceed manually.
-            navigate('/loginpage'); 
+            console.error('Registration successful, but token missing.', res.data);
+            setError('Registration succeeded, but auto-login failed. Please try logging in.');
+            setTimeout(() => {
+                navigate('/loginpage'); 
+            }, 50);
         }
-    }catch (error) {
-        // This catch block handles HTTP errors (like 400 Bad Request) or network errors.
-        const errMsg = error.response?.data?.msg || 'Registration failed due to a network error.';
-        setError(errMsg);
-        console.error('Registration Error: ' , errMsg);
+        }catch (error) {
+            // This remains correct for showing backend error messages
+            const errMsg = error.response?.data?.msg || 'Registration failed due to a network error.';
+            setError(errMsg);
+            console.error('Registration Error: ' , errMsg);
+        }
     }
-}
 
 
   return (

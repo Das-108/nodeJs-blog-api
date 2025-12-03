@@ -17,13 +17,12 @@ const CreatePost = () => {
   const { title , content } = formData
 
   const handleChange = (e) => {
-    e.preventDefault
     setFormData({ ...formData, [e.target.name]: e.target.value })
     setError(null)
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault
+    e.preventDefault()
     setError(null)
     setSuccessMsg(null)
 
@@ -34,7 +33,7 @@ const CreatePost = () => {
 
       setTimeout(() => {
         navigate('/adminhome')
-      }, 5000);
+      }, 2000);
 
     } catch (error) {
       const errMsg = error.response?.data?.msg || 'Failed to create post. check server status.'

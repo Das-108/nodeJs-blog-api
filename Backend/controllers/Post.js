@@ -16,6 +16,9 @@ const getPost = async (req, res) => {
         if(!post) return res.status(404).json({ msg: 'Post is not found'})
         res.json(post)
     }catch (error) {
+        if (error.name === 'CastError') {
+            return res.status(404).json({ mgs: 'Post not found or invalid ID format'})
+        }
         console.error(error.message);
         res.status(500).send('Server Error');
     }
