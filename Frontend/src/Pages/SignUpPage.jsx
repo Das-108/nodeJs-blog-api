@@ -28,37 +28,29 @@ const SignUpPage = () => {
         setError(null);
 
         try {
-        const res = await api.post('/auth/register', formData);
-        
-        const receivedToken = res.data?.token; // Use optional chaining for safety
-        
-        if (receivedToken) { 
-            
-            localStorage.setItem('token', receivedToken);
-            
-            // 🛑 FIX 1: Removed synchronous alert()
-            console.log('Registration successful! Redirecting to /adminhome.'); 
-            
-            // 🛑 FIX 2: Use setTimeout to ensure the navigation executes cleanly
-            setTimeout(() => {
-                // Use the correct destination path
-                navigate('/adminhome'); 
-            }, 50); // A minimal delay to decouple the execution
-            
-        } else {
-            console.error('Registration successful, but token missing.', res.data);
-            setError('Registration succeeded, but auto-login failed. Please try logging in.');
-            setTimeout(() => {
-                navigate('/loginpage'); 
-            }, 50);
+            const res = await api.post('/auth/register', formData);
+
+            console.log("SERVER RESPONSE:", res.data);
+
+            const receivedToken = res.data?.token;
+
+            if (receivedToken) {
+                localStorage.setItem("token", receivedToken);
+
+                alert("Registration successful!");
+                navigate('/adminhome');
+            } else {
+                alert("Registered but token missing. Please login.");
+                navigate('/loginpage');
+            }
+
+        } catch (error) {
+                const errMsg = error.response?.data?.msg || "Registration failed.";
+                setError(errMsg);
+                console.error("Registration Error:", errMsg);
         }
-        }catch (error) {
-            // This remains correct for showing backend error messages
-            const errMsg = error.response?.data?.msg || 'Registration failed due to a network error.';
-            setError(errMsg);
-            console.error('Registration Error: ' , errMsg);
-        }
-    }
+    };
+
 
 
   return (

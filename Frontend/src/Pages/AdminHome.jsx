@@ -56,6 +56,7 @@ const AdminHome = () => {
             setShowModal(false)
             setLoading(false)
             setPostToDelete(null)
+            return
         }
 
         setShowModal(false)

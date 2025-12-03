@@ -54,7 +54,15 @@ const UserHome = () => {
   return (
     <div>
         <Header onLoginClick={handleLogin} onSignupClick = {handleSignUp} />
-        <Card />
+        {posts.map(post => (
+          <Card 
+            key={post.id}
+            postTitle={post.title}
+            postContent={post.content}
+            postTime = {new Date(post.createdAt).toLocaleDateString()}
+          />
+        ))          
+        }        
     </div>
   )
 }
