@@ -21,14 +21,17 @@ const App = () => {
 
         <Route path='/' element= {<UserHome />} />
         <Route path='/blogdetailpage' element= {<BlogDetailPage />} />
-        <Route path='/adminhome' element= {<AdminHome />} />
+       
         <Route path='/loginpage' element= {<LoginPage />} />
         <Route path='/signup' element= { <SignUpPage /> } />
 
-        <Route path='/edit-page/:id' element= { <EditPage />} />
-        <Route path='/delete-page/:id' element = { <DeletePage /> } />
-        <Route path='/create-post' element = { <CreatePost /> } />
-        
+        <Route element={<ProtectedRoute />}>
+          <Route path='/adminhome' element= {<AdminHome />} />
+          <Route path='/edit-page/:id' element= { <EditPage />} />
+          <Route path='/delete-page/:id' element = { <DeletePage /> } />
+          <Route path='/create-post' element = { <CreatePost /> } />
+        </Route>          
+
       </Routes>
 
     </div>
